@@ -1,0 +1,15 @@
+{
+  "name": "brandflow-alwayson-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "멀티채널 콘텐츠 운영 자동화 MVP",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test --test-isolation=none",
+    "build:pages": "node scripts/build-pages.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

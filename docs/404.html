@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="멀티채널 콘텐츠 운영 자동화 MVP">
+  <title>BrandFlow Always-On</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mark">
+        <span class="brand-glyph">B</span>
+        <div><strong>BrandFlow</strong><small>Always-On OS</small></div>
+      </div>
+      <nav aria-label="주 메뉴">
+        <button class="nav-item active" data-target="overview"><span>⌂</span>운영 현황</button>
+        <button class="nav-item" data-target="studio"><span>✦</span>콘텐츠 스튜디오</button>
+        <button class="nav-item" data-target="queue"><span>◷</span>발행 큐</button>
+        <button class="nav-item" data-target="learning"><span>↗</span>성과 학습</button>
+      </nav>
+      <div class="sidebar-card">
+        <span class="eyebrow">DEMO MODE</span>
+        <strong>안전한 드라이런</strong>
+        <p>실제 계정에는 게시하지 않습니다. 승인·예약·상태 전이만 검증합니다.</p>
+      </div>
+      <div class="sidebar-foot">
+        <span class="status-dot"></span>
+        <div><strong>자동화 엔진 정상</strong><small>15초마다 작업 확인</small></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">CONTENT OPERATIONS</span>
+          <h1>브랜드는 쉬어도, 운영은 멈추지 않게</h1>
+        </div>
+        <div class="top-actions">
+          <button id="resetButton" class="button ghost">데모 초기화</button>
+          <button id="openComposer" class="button primary"><span>＋</span> 새 콘텐츠</button>
+        </div>
+      </header>
+
+      <section id="overview" class="section hero-grid">
+        <article class="hero-card">
+          <div class="hero-copy">
+            <span class="pill live"><i></i>오늘의 운영 요약</span>
+            <h2>한 번 기획하고,<br><em>채널답게 다섯 번</em> 말합니다.</h2>
+            <p>조사·채널별 변환·승인·예약·성과 수집을 한 작업 흐름으로 묶었습니다.</p>
+            <button class="button light" id="heroCompose">콘텐츠 흐름 실행하기 <span>→</span></button>
+          </div>
+          <div class="orbit" aria-label="다섯 채널 자동화 흐름">
+            <div class="orbit-core"><b>1</b><span>master<br>brief</span></div>
+            <span class="channel-badge ig">IG</span>
+            <span class="channel-badge nv">N</span>
+            <span class="channel-badge bg">B</span>
+            <span class="channel-badge th">@</span>
+            <span class="channel-badge yt">▶</span>
+          </div>
+        </article>
+
+        <article class="today-card panel">
+          <div class="panel-head">
+            <div><span class="eyebrow">TODAY</span><h3>발행 흐름</h3></div>
+            <span id="todayDate" class="muted"></span>
+          </div>
+          <div class="progress-ring-wrap">
+            <div class="progress-ring"><strong id="todayCount">0</strong><span>건 예약</span></div>
+            <div class="mini-legend">
+              <span><i class="purple"></i>예약</span>
+              <span><i class="green"></i>완료</span>
+              <span><i class="amber"></i>검수</span>
+            </div>
+          </div>
+          <div id="nextJob" class="next-job"></div>
+        </article>
+      </section>
+
+      <section class="section metric-grid" aria-label="핵심 운영 지표">
+        <article class="metric-card"><span class="metric-icon violet">↗</span><div><small>발행 성공률</small><strong id="successRate">-</strong><em>목표 95% 이상</em></div></article>
+        <article class="metric-card"><span class="metric-icon blue">◉</span><div><small>유기적 도달</small><strong id="reach">-</strong><em>최근 7일</em></div></article>
+        <article class="metric-card"><span class="metric-icon green">⌁</span><div><small>참여율</small><strong id="engagement">-</strong><em>저장·댓글·공유</em></div></article>
+        <article class="metric-card"><span class="metric-icon amber">◷</span><div><small>절감 시간</small><strong id="savedHours">-</strong><em>주간 추정</em></div></article>
+      </section>
+
+      <section class="section split-grid">
+        <article class="panel performance-card">
+          <div class="panel-head">
+            <div><span class="eyebrow">CHANNEL SIGNAL</span><h3>채널 성과 신호</h3></div>
+            <span class="muted">도달·반응 종합지수</span>
+          </div>
+          <div id="channelChart" class="channel-chart"></div>
+        </article>
+        <article class="panel learning-card">
+          <div class="panel-head">
+            <div><span class="eyebrow">NEXT BEST ACTION</span><h3>이번 주 자동 제안</h3></div>
+            <span class="spark">✦</span>
+          </div>
+          <div id="recommendations"></div>
+        </article>
+      </section>
+
+      <section id="studio" class="section panel">
+        <div class="panel-head studio-head">
+          <div><span class="eyebrow">CONTENT STUDIO</span><h2>콘텐츠 파이프라인</h2><p>마스터 브리프 하나가 채널별 원고로 변환됩니다.</p></div>
+          <button class="button primary" id="studioCompose">새 브리프 만들기</button>
+        </div>
+        <div id="contentList" class="content-list"></div>
+      </section>
+
+      <section id="queue" class="section panel">
+        <div class="panel-head">
+          <div><span class="eyebrow">PUBLISHING QUEUE</span><h2>예약·발행 작업</h2></div>
+          <button id="tickButton" class="button ghost">지금 작업 확인</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>콘텐츠</th><th>채널</th><th>발행 시각</th><th>상태</th><th>시도</th><th></th></tr></thead>
+            <tbody id="jobTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="learning" class="section learning-layout">
+        <article class="panel hourly-card">
+          <div class="panel-head"><div><span class="eyebrow">TIME LEARNING</span><h2>반응 시간대</h2></div><strong>21시 추천</strong></div>
+          <div id="hourlyChart" class="hourly-chart"></div>
+          <div class="hour-labels"><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div>
+        </article>
+        <article class="panel connector-card">
+          <div class="panel-head"><div><span class="eyebrow">CONNECTORS</span><h2>채널 연동 경계</h2></div></div>
+          <div id="connectorList"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="composerDialog" class="modal">
+    <form id="composerForm" method="dialog">
+      <div class="modal-head">
+        <div><span class="eyebrow">MASTER BRIEF</span><h2>5채널 초안 만들기</h2><p>같은 메시지를 복제하지 않고, 채널 문법에 맞게 재구성합니다.</p></div>
+        <button type="button" class="icon-button" data-close aria-label="닫기">×</button>
+      </div>
+      <label>핵심 주제<input name="title" required minlength="4" placeholder="예: 작은 거실이 넓어 보이는 가구 배치"></label>
+      <div class="form-grid">
+        <label>핵심 고객<input name="audience" placeholder="예: 첫 집을 꾸미는 1-2인 가구"></label>
+        <label>목표<select name="goal"><option>검색 유입과 저장</option><option>브랜드 인지도</option><option>문의·리드 획득</option><option>제품 비교·구매 전환</option></select></label>
+      </div>
+      <label>키워드<input name="keywords" required placeholder="쉼표로 구분: 좁은 거실, 가구 배치, 원룸 인테리어"></label>
+      <fieldset><legend>고객 여정</legend><div class="choice-row"><label><input type="radio" name="funnel" value="발견" checked><span>발견</span></label><label><input type="radio" name="funnel" value="검색"><span>검색</span></label><label><input type="radio" name="funnel" value="확신"><span>확신</span></label><label><input type="radio" name="funnel" value="전환"><span>전환</span></label></div></fieldset>
+      <div class="modal-actions"><button type="button" class="button ghost" data-close>취소</button><button type="submit" class="button primary"><span>✦</span> 초안 생성</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detailDialog" class="modal wide">
+    <div id="detailContent"></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./static-api.js" defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
