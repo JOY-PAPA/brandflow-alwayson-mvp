@@ -1,10 +1,12 @@
 # BrandFlow Always-On MVP
 
-브랜드 콘텐츠를 한 번 기획하고 Instagram, 네이버 블로그, Google Blogger, Threads, YouTube Shorts의 문법에 맞게 변환한 뒤 검수·예약·발행 상태를 관리하는 로컬 실행형 MVP입니다.
+브랜드 콘텐츠를 한 번 기획하고 Instagram, 네이버 블로그, Google Blogger, Threads, YouTube Shorts의 문법에 맞게 변환한 뒤 검수·예약·발행 상태를 관리하는 자동화 MVP입니다. GitHub Actions가 매일 오전 8시 17분(Asia/Seoul)에 새 게시물 패키지를 생성하고 GitHub Pages를 다시 배포합니다.
 
 ## 지금 바로 확인할 수 있는 것
 
 - 마스터 브리프 1건에서 5채널 초안 생성
+- 매일 1건의 마스터 콘텐츠와 5개 채널 완성 원고 자동 생성
+- 날짜별 원고 아카이브와 대시보드 최신 초안 자동 동기화
 - Instagram 6장 캐러셀, 네이버 장문, Blogger 아티클, Threads 대화형 글, YouTube Shorts 스크립트로 분기
 - 브랜드 적합도·명료성·독창성·표현 위험 점검
 - 사람의 검수 승인 없이는 예약 불가
@@ -13,7 +15,40 @@
 - 채널 성과 신호, 추천 발행 시간, 다음 행동 제안 UI
 - 데스크톱·모바일 반응형 대시보드
 
-현재 버전은 `dry-run`입니다. 실제 SNS 계정에 게시하지 않으며, 자격증명 없이 전체 운영 흐름을 검증합니다.
+현재 버전은 `daily draft + dry-run`입니다. 실제 SNS 계정에 게시하지 않으며, 생성된 원고는 반드시 사람의 검수 승인 후 예약할 수 있습니다.
+
+## 매일 자동 생성
+
+`.github/workflows/daily-content.yml`이 다음 작업을 수행합니다.
+
+1. 매일 오전 8시 17분에 실행합니다.
+2. `automation.config.json`의 브랜드, 고객, 톤, 금지 표현, 콘텐츠 기둥을 읽습니다.
+3. Instagram, 네이버 블로그, Blogger, Threads, YouTube Shorts 원고를 각각 생성합니다.
+4. `content/daily/YYYY-MM-DD.json`에 날짜별 원고를 보관합니다.
+5. `public/daily/latest.json`과 `docs/`를 갱신합니다.
+6. 생성 결과를 `main` 브랜치에 커밋하고 GitHub Pages에 배포합니다.
+
+OpenAI API 키가 없으면 내장 템플릿 엔진이 매일 원고를 생성하므로 자동화가 중단되지 않습니다. AI 원고 생성을 활성화하려면 GitHub 저장소에서 **Settings → Secrets and variables → Actions → New repository secret**을 열고 다음 비밀값을 추가합니다.
+
+- 이름: `OPENAI_API_KEY`
+- 값: OpenAI Platform에서 발급한 API 키
+
+모델을 변경하려면 같은 화면의 **Variables**에 `OPENAI_MODEL`을 추가합니다. 기본값은 `gpt-5.4-mini`입니다. API 키는 `.env`, 브라우저 코드, 커밋 파일에 넣지 않습니다.
+
+로컬에서 오늘 원고를 생성하려면:
+
+```powershell
+npm run generate:daily
+npm run build:pages
+```
+
+특정 날짜를 시험하려면 PowerShell에서 다음과 같이 실행합니다.
+
+```powershell
+$env:CONTENT_DATE = "2026-08-27"
+npm run generate:daily
+Remove-Item Env:CONTENT_DATE
+```
 
 ## 실행 방법
 
@@ -34,13 +69,13 @@ npm test
 
 ## GitHub Pages 배포판
 
-GitHub Pages는 서버 프로그램을 실행할 수 없으므로 `docs/`에는 브라우저 저장소 기반의 정적 데모가 들어 있습니다. 다음 명령으로 다시 생성할 수 있습니다.
+GitHub Pages는 서버 프로그램을 실행할 수 없으므로 `docs/`에는 브라우저 저장소 기반의 정적 앱이 들어 있습니다. 매일 GitHub Actions가 최신 일일 원고를 포함해 다시 생성합니다. 수동으로 다시 생성하려면:
 
 ```powershell
 npm run build:pages
 ```
 
-Pages 설정에서는 `Deploy from a branch`, 브랜치 `main`, 폴더 `/docs`를 선택합니다. 공개된 데모에서 생성·승인·예약 상태는 방문자의 브라우저에만 저장되며 실제 SNS 계정에는 게시되지 않습니다. 페이지가 열려 있을 때만 15초 주기 작업 확인이 동작합니다.
+Pages 설정에서는 배포 소스를 `GitHub Actions`로 선택합니다. 공개 앱에서 생성·승인·예약 상태는 방문자의 브라우저에 저장되며 실제 SNS 계정에는 게시되지 않습니다. 페이지가 열려 있을 때만 15초 주기 예약 상태 확인이 동작하지만, 일일 원고 생성과 사이트 배포는 브라우저를 닫아도 GitHub Actions에서 실행됩니다.
 
 ## 빠른 사용 흐름
 
@@ -55,13 +90,19 @@ Pages 설정에서는 `Deploy from a branch`, 브랜치 `main`, 폴더 `/docs`�
 
 ```text
 brandflow-alwayson-mvp/
+├─ .github/workflows/  매일 생성·배포 작업
+├─ automation.config.json 브랜드와 콘텐츠 기둥 설정
+├─ content/daily/      날짜별 생성 원고 아카이브
 ├─ public/              대시보드 UI
+├─ scripts/
+│  ├─ generate-daily-content.js  일일 AI/템플릿 생성기
+│  └─ build-pages.js             Pages 빌드
 ├─ src/
 │  ├─ engine.js         생성·승인·예약·재시도 상태 머신
 │  ├─ adapters.js       채널 기능 경계와 드라이런 게시기
 │  ├─ seed.js           데모 브랜드·콘텐츠·지표
 │  └─ store.js          JSON 파일/메모리 저장소
-├─ test/engine.test.js  핵심 도메인 테스트
+├─ test/                상태 머신·일일 생성기 테스트
 ├─ server.js            Node.js HTTP API와 정적 파일 서버
 └─ ANALYSIS_AND_BUILD_PLAN.md
 ```

@@ -77,9 +77,15 @@ function contentTitle(contentId) {
 function renderContents() {
   const rows = stateRef.value.contents.map((content) => {
     const action = content.status === "review" ? `<button class="button small primary" data-approve="${content.id}">승인</button>` : content.status === "approved" ? `<button class="button small primary" data-detail="${content.id}">예약</button>` : "";
-    return `<article class="content-row"><div class="content-main"><strong>${escapeHtml(content.title)}</strong><p>${escapeHtml(content.audience)} · ${escapeHtml(content.funnel)} · ${formatDate(content.createdAt)}</p></div><div class="keyword-list">${content.keywords.slice(0,3).map((keyword) => `<span class="tag">${escapeHtml(keyword)}</span>`).join("")}</div><div class="score"><b>${content.quality.brandFit}</b>브랜드 적합도</div><span class="status ${escapeHtml(content.status)}">${escapeHtml(statusNames[content.status] || content.status)}</span><div class="row-actions"><button class="button small ghost" data-detail="${content.id}">보기</button>${action}</div></article>`;
+    const autoBadge = content.automation?.source === "daily-workflow" ? `<span class="auto-badge">매일 자동 생성</span>` : "";
+    return `<article class="content-row"><div class="content-main"><strong>${escapeHtml(content.title)} ${autoBadge}</strong><p>${escapeHtml(content.audience)} · ${escapeHtml(content.funnel)} · ${formatDate(content.createdAt)}</p></div><div class="keyword-list">${content.keywords.slice(0,3).map((keyword) => `<span class="tag">${escapeHtml(keyword)}</span>`).join("")}</div><div class="score"><b>${content.quality.brandFit}</b>브랜드 적합도</div><span class="status ${escapeHtml(content.status)}">${escapeHtml(statusNames[content.status] || content.status)}</span><div class="row-actions"><button class="button small ghost" data-detail="${content.id}">보기</button>${action}</div></article>`;
   }).join("");
   $("#contentList").innerHTML = rows || `<div class="empty">아직 콘텐츠가 없습니다.</div>`;
+  const daily = stateRef.value.dailyAutomation;
+  if (daily) {
+    const provider = daily.generator?.provider === "openai" ? `OpenAI · ${daily.generator.model || "AI"}` : "템플릿 엔진";
+    $("#dailyStatus").innerHTML = `<span class="daily-live"><i></i>자동 생성 정상</span><div><strong>${escapeHtml(daily.date)} · ${escapeHtml(daily.topicPillar || "일일 콘텐츠")}</strong><small>${escapeHtml(provider)}으로 생성 · 사람 검수 후 예약</small></div>`;
+  }
 }
 
 function renderJobs() {

@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test --test-isolation=none",
-    "build:pages": "node scripts/build-pages.js"
+    "build:pages": "node scripts/build-pages.js",
+    "generate:daily": "node scripts/generate-daily-content.js"
   },
   "engines": {
     "node": ">=22"

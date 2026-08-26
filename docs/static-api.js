@@ -8,6 +8,8 @@
   const STORAGE_KEY = "brandflow-pages-state-v1";
   const CHANNELS = ["instagram", "naver", "blogger", "threads", "youtube"];
   let seedPromise;
+  let latestDailyCache;
+  let latestDailyFetchedAt = 0;
 
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const uid = (prefix) => `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
@@ -25,14 +27,50 @@
     return clone(await seedPromise);
   }
 
+  async function latestDaily() {
+    if (latestDailyCache && Date.now() - latestDailyFetchedAt < 60000) return clone(latestDailyCache);
+    try {
+      const url = new URL("./daily/latest.json", document.baseURI);
+      url.searchParams.set("v", String(Date.now()));
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) return null;
+      latestDailyCache = await response.json();
+      latestDailyFetchedAt = Date.now();
+      return clone(latestDailyCache);
+    } catch {
+      return null;
+    }
+  }
+
+  async function mergeLatestDaily(state) {
+    const daily = await latestDaily();
+    if (!daily?.content?.id) return state;
+    if (!state.contents.some((item) => item.id === daily.content.id)) {
+      state.contents.unshift(clone(daily.content));
+      const eventId = `evt_daily_${String(daily.date || "").replaceAll("-", "")}`;
+      if (!state.events.some((item) => item.id === eventId)) {
+        state.events.unshift({ id: eventId, type: "content", message: `“${daily.content.title}” 일일 초안이 자동 생성되었습니다.`, at: daily.generatedAt });
+      }
+    }
+    state.dailyAutomation = {
+      date: daily.date,
+      generatedAt: daily.generatedAt,
+      generator: clone(daily.generator || {}),
+      topicPillar: daily.topicPillar
+    };
+    return state;
+  }
+
   async function readState() {
+    let state;
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      try { return JSON.parse(stored); } catch { localStorage.removeItem(STORAGE_KEY); }
+      try { state = JSON.parse(stored); } catch { localStorage.removeItem(STORAGE_KEY); }
     }
-    const initial = await seed();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
-    return initial;
+    if (!state) state = await seed();
+    state = await mergeLatestDaily(state);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return clone(state);
   }
 
   function writeState(state) {

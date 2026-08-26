@@ -1,0 +1,83 @@
+name: Daily social content
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/daily-content.yml"
+      - "automation.config.json"
+      - "scripts/**"
+      - "src/**"
+      - "public/**"
+      - "test/**"
+      - "package.json"
+  schedule:
+    - cron: "17 8 * * *"
+      timezone: "Asia/Seoul"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "오늘 콘텐츠를 다시 생성"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: brandflow-daily-content
+  cancel-in-progress: false
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify automation engine
+        run: npm test
+
+      - name: Generate daily channel drafts
+        run: npm run generate:daily
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL || 'gpt-5.4-mini' }}
+          FORCE_GENERATE: ${{ inputs.force && '1' || '0' }}
+
+      - name: Build GitHub Pages
+        run: npm run build:pages
+
+      - name: Commit generated archive
+        shell: bash
+        run: |
+          git config user.name "brandflow-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/daily public/daily docs
+          if ! git diff --cached --quiet; then
+            git commit -m "Generate daily social content"
+            git push
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

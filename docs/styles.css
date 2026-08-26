@@ -61,6 +61,13 @@ main { margin-left: 248px; padding: 0 34px 60px; max-width: 1680px; }
 .panel-head h3 { font-size: 18px; }
 .panel-head p { margin: 7px 0 0; color: var(--muted); font-size: 13px; }
 .muted { color: var(--muted); font-size: 12px; }
+.daily-status { display:flex; align-items:center; gap:14px; margin:-4px 0 18px; padding:13px 15px; border:1px solid #d9f1e8; background:#f4fbf8; border-radius:13px; }
+.daily-status strong, .daily-status small { display:block; }
+.daily-status strong { font-size:12px; }
+.daily-status small { margin-top:3px; color:var(--muted); font-size:10px; }
+.daily-live { display:inline-flex; align-items:center; gap:7px; flex-shrink:0; color:#137555; background:#e3f7ef; border-radius:999px; padding:7px 9px; font-size:9px; font-weight:900; }
+.daily-live i { width:6px; height:6px; border-radius:50%; background:#19a974; box-shadow:0 0 0 4px rgba(25,169,116,.12); }
+.auto-badge { display:inline-flex; vertical-align:middle; margin-left:7px; padding:4px 7px; border-radius:999px; background:#e9f8f2; color:#16805d; font-size:8px; font-weight:900; }
 
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(290px, .85fr); gap: 22px; }
 .hero-card { min-height: 328px; border-radius: 22px; color: white; overflow: hidden; display: grid; grid-template-columns: 1.2fr .8fr; background: radial-gradient(circle at 82% 25%, rgba(109,93,252,.35), transparent 28%), linear-gradient(125deg, #17151e 0%, #1e1b2c 55%, #24203b 100%); box-shadow: var(--shadow); }
