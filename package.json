@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --test --test-isolation=none",
+    "test": "node test/run.js",
     "build:pages": "node scripts/build-pages.js",
     "generate:daily": "node scripts/generate-daily-content.js"
   },
