@@ -66,7 +66,7 @@
         "원룸 인테리어"
       ],
       "status": "approved",
-      "createdAt": "2026-09-28T02:34:16.966Z",
+      "createdAt": "2026-09-29T02:06:48.917Z",
       "quality": {
         "brandFit": 92,
         "clarity": 88,
@@ -120,7 +120,7 @@
         "브랜드 자산"
       ],
       "status": "scheduled",
-      "createdAt": "2026-09-28T14:34:16.966Z",
+      "createdAt": "2026-09-29T14:06:48.917Z",
       "quality": {
         "brandFit": 86,
         "clarity": 91,
@@ -168,21 +168,21 @@
       "id": "job_demo_01",
       "contentId": "cnt_demo_02",
       "channel": "instagram",
-      "publishAt": "2026-09-29T03:04:16.966Z",
+      "publishAt": "2026-09-30T02:36:48.917Z",
       "status": "scheduled",
       "attempts": 0,
       "maxAttempts": 3,
-      "createdAt": "2026-09-29T01:34:16.966Z"
+      "createdAt": "2026-09-30T01:06:48.917Z"
     },
     {
       "id": "job_demo_02",
       "contentId": "cnt_demo_02",
       "channel": "naver",
-      "publishAt": "2026-09-29T04:04:16.966Z",
+      "publishAt": "2026-09-30T03:36:48.917Z",
       "status": "scheduled",
       "attempts": 0,
       "maxAttempts": 1,
-      "createdAt": "2026-09-29T01:34:16.966Z"
+      "createdAt": "2026-09-30T01:06:48.917Z"
     }
   ],
   "events": [
@@ -190,13 +190,13 @@
       "id": "evt_01",
       "type": "report",
       "message": "지난 7일 성과 리포트가 준비되었습니다.",
-      "at": "2026-09-29T00:34:16.966Z"
+      "at": "2026-09-30T00:06:48.917Z"
     },
     {
       "id": "evt_02",
       "type": "learning",
       "message": "저장률이 높은 콘텐츠는 체크리스트형 제목을 사용했습니다.",
-      "at": "2026-09-28T23:34:16.966Z"
+      "at": "2026-09-29T23:06:48.917Z"
     }
   ],
   "metrics": {
